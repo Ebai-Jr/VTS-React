@@ -104,89 +104,48 @@ function Geolocation() {
     }
   };
 
-  const deletePolygon = async () => {
-    if (selectedPolygon && selectedPolygon.getId()) {
+  const deletePolygon = async (polygonToDelete) => {
+    if (polygonToDelete && polygonToDelete.getId()) {
       try {
-        await deleteDoc(doc(db, "polygons", selectedPolygon.getId()));
-        mapRef.current.source.removeFeature(selectedPolygon);
-        setPolygons(prevPolygons => prevPolygons.filter(p => p !== selectedPolygon));
-        setSelectedPolygon(null);
+        await deleteDoc(doc(db, "polygons", polygonToDelete.getId()));
+        mapRef.current.source.removeFeature(polygonToDelete);
+        setPolygons(prevPolygons => prevPolygons.filter(p => p !== polygonToDelete));
+        if (selectedPolygon === polygonToDelete) {
+          setSelectedPolygon(null);
+        }
       } catch (e) {
         console.error("Error deleting document: ", e);
       }
     } else {
-      console.error("No polygon selected or polygon has no ID");
+      console.error("Invalid polygon or polygon has no ID");
     }
   };
 
   const checkVehicleLocation = () => {
-    // Replace these coordinates with actual vehicle coordinates
-    // Remember: [longitude, latitude]
-    const vehicleCoords = [10.254624, 6.005553]; // Example: New York City
-
-    // Remove previous vehicle feature if it exists
-    if (vehicleFeature) {
-      mapRef.current.source.removeFeature(vehicleFeature);
-    }
-
-    // Create a new feature for the vehicle
-    const newVehicleFeature = new Feature({
-      geometry: new Point(fromLonLat(vehicleCoords))
-    });
-
-    // Style for the vehicle point
-    const vehicleStyle = new Style({
-      image: new CircleStyle({
-        radius: 6,
-        fill: new Fill({ color: 'red' }),
-        stroke: new Stroke({ color: 'white', width: 2 })
-      })
-    });
-
-    newVehicleFeature.setStyle(vehicleStyle);
-
-    // Add the vehicle feature to the map
-    mapRef.current.source.addFeature(newVehicleFeature);
-    setVehicleFeature(newVehicleFeature);
-
-    // Center the map on the vehicle location
-    mapRef.current.map.getView().animate({
-      center: fromLonLat(vehicleCoords),
-      zoom: 10,
-      duration: 1000
-    });
-
-    let insideAny = false;
-
-    polygons.forEach((polygon, index) => {
-      if (isPointInPolygon(fromLonLat(vehicleCoords), polygon.getGeometry())) {
-        console.log(`Vehicle is inside Area ${index + 1}`);
-        insideAny = true;
-      }
-    });
-
-    if (!insideAny) {
-      console.log("Vehicle is not inside any defined area");
-    }
+    // ... (keep this function as is)
   };
 
   return (
-    <div className='geolocation' style={{display: 'flex'}}>
-      <div style={{width: '30%', padding: '20px', zIndex: '-1'}}>
+    <div className="map-page">
+      <div className="sidebar">
+      <div className="control-section">
         <h1>Geolocation</h1>
         <p>Draw polygons on the map to define geofenced areas.</p>
         <h2>Defined Areas:</h2>
         <ul>
           {polygons.map((polygon, index) => (
-            <li key={polygon.getId()}>Area {index + 1}</li>
+            <li key={polygon.getId()}>
+              Area {index + 1}
+              <button onClick={() => deletePolygon(polygon)}>Delete</button>
+            </li>
           ))}
         </ul>
-        {selectedPolygon && (
-          <button onClick={deletePolygon}>Delete Selected Area</button>
-        )}
         <button onClick={checkVehicleLocation}>Check Vehicle Location</button>
       </div>
-      <div id="geo-map" className="map"></div>
+      </div>
+      <div className="map-container">
+        <div id="geo-map" className="map"></div>
+      </div>
     </div>
   );
 }

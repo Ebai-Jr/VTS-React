@@ -37,15 +37,15 @@ export const SidebarData = [
         cName: "nav-text"
     },
     {
-        title: "Messages",
-        path: "/messages",
-        icon: <FaIcons.FaEnvelopeOpenText />,
+        title: "Selections",
+        path: "/selections",
+        icon: <IoIcons.IoMdHelpCircle />,
         cName: "nav-text"
     },
     {
-        title: "Support",
-        path: "/support",
-        icon: <IoIcons.IoMdHelpCircle />,
+        title: "Logs",
+        path: "/logs",
+        icon: <FaIcons.FaEnvelopeOpenText />,
         cName: "nav-text"
     },
 ]
