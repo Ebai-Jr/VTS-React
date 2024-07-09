@@ -9,6 +9,7 @@ import Geolocation from "./pages/Geolocation";
 import Team from "./pages/Team";
 import Logs from "./pages/Logs";
 import Selections from "./pages/Selections";
+import Movement from "./pages/Movement";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
       <Route path="/team" Component={Team} />
       <Route path="/logs" Component={Logs} />
       <Route path="/Selections" Component={Selections} />
+      <Route path="/Movement" Component={Movement} />
     </Routes>
     </div>
    </Router>

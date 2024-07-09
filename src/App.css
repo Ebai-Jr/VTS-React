@@ -50,7 +50,7 @@ body, html {
     padding: 20px;
 }
 
-.home, .historical, .states, .geolocation, .team, .logs {
+.home, .historical, .states, .geolocation, .team, .logs, .movement {
     display: flex;
     min-height: calc(100vh - 50px); /* Subtracting navbar height */
     align-items: center;

@@ -4,6 +4,7 @@ import * as AiIcons from "react-icons/ai";
 import * as IoIcons from "react-icons/io";
 import * as GiIcons from "react-icons/gi";
 import * as BsIcons from "react-icons/bs";
+import * as LuIcons from "react-icons/lu";
 
 export const SidebarData = [
     {
@@ -16,6 +17,12 @@ export const SidebarData = [
         title: "Historical",
         path: "/historical",
         icon: <IoIcons.IoIosPaper />,
+        cName: "nav-text"
+    },
+    {
+        title: "Movement",
+        path: "/movement",
+        icon: <LuIcons.LuMonitorPlay />,
         cName: "nav-text"
     },
     {
