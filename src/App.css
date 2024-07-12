@@ -345,3 +345,59 @@ button:disabled {
     font-weight: bold;
     margin-top: 10px;
   }
+
+/* States CSS */
+/* States CSS */
+
+.on {
+  color: green;
+  font-weight: bold;
+}
+
+.idle {
+  color: orange;
+  font-weight: bold;
+}
+
+.off {
+  color: red;
+  font-weight: bold;
+}
+
+.unknown {
+  color: gray;
+  font-weight: bold;
+}
+
+.moving {
+  color: blue;
+  font-weight: bold;
+}
+
+.not-moving {
+  color: purple;
+  font-weight: bold;
+}
+
+.states-page {
+  padding: 20px;
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+.states-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.states-table th, .states-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.states-table th {
+  background-color: #f2f2f2;
+}

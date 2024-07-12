@@ -31,23 +31,53 @@ function States() {
 
   const calculateStates = (locations) => {
     const states = [];
+    let lastKnownState = 'Unknown';
+    const OFF_THRESHOLD = 1800; // 30 minutes in seconds
+
     for (let i = 1; i < locations.length; i++) {
       const prevLocation = locations[i - 1];
       const currentLocation = locations[i];
       
       const distance = calculateDistance(
-        prevLocation.latitude,
-        prevLocation.longitude,
-        currentLocation.latitude,
-        currentLocation.longitude
+        prevLocation.latitude, prevLocation.longitude,
+        currentLocation.latitude, currentLocation.longitude
       );
 
       const timeDiff = (currentLocation.timestamp - prevLocation.timestamp) / 1000; // in seconds
+
+      // Insert "Off" state if there's a large gap
+      if (timeDiff > OFF_THRESHOLD) {
+        const offState = {
+          timestamp: new Date(prevLocation.timestamp.getTime() + OFF_THRESHOLD * 1000),
+          date: formatDate(new Date(prevLocation.timestamp.getTime() + OFF_THRESHOLD * 1000)),
+          isMoving: false,
+          powerState: 'Off',
+          distance: 0,
+          timeDiff: OFF_THRESHOLD
+        };
+        states.push(offState);
+        lastKnownState = 'Off';
+      }
+
+      let powerState;
+      if (distance > 2) {
+        powerState = 'On';
+        lastKnownState = 'On';
+      } else if (timeDiff <= 300) { // 5 minutes
+        powerState = lastKnownState === 'On' ? 'On (Idle)' : 'On';
+        lastKnownState = 'On';
+      } else if (timeDiff > 300 && timeDiff <= OFF_THRESHOLD) {
+        powerState = 'Unknown';
+      } else {
+        powerState = 'On'; // Changed from 'Off' to 'On' as we're now explicitly adding 'Off' states
+        lastKnownState = 'On';
+      }
 
       const state = {
         timestamp: currentLocation.timestamp,
         date: currentLocation.date,
         isMoving: distance > 2,
+        powerState: powerState,
         distance: distance,
         timeDiff: timeDiff
       };
@@ -72,6 +102,25 @@ function States() {
     return R * c; // Distance in meters
   };
 
+  const formatDate = (date) => {
+    return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+  };
+
+  const getStateClass = (powerState) => {
+    switch (powerState) {
+      case 'On':
+        return 'on';
+      case 'On (Idle)':
+        return 'idle';
+      case 'Off':
+        return 'off';
+      case 'Unknown':
+        return 'unknown';
+      default:
+        return '';
+    }
+  };
+
   return (
     <div className='states-page'>
       <h1>Vehicle States</h1>
@@ -81,7 +130,8 @@ function States() {
             <tr>
               <th>Date</th>
               <th>Time</th>
-              <th>State</th>
+              <th>Power State</th>
+              <th>Movement State</th>
               <th>Distance (m)</th>
               <th>Time Diff (s)</th>
             </tr>
@@ -90,7 +140,10 @@ function States() {
             {states.map((state, index) => (
               <tr key={index}>
                 <td>{state.date}</td>
-                <td>{state.timestamp.toLocaleTimeString()}</td>
+                <td>{new Date(state.timestamp).toLocaleTimeString()}</td>
+                <td className={getStateClass(state.powerState)}>
+                  {state.powerState}
+                </td>
                 <td className={state.isMoving ? 'moving' : 'not-moving'}>
                   {state.isMoving ? 'Moving' : 'Not Moving'}
                 </td>
