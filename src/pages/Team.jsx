@@ -5,7 +5,7 @@ import { db } from '../firebase'; // Make sure this path is correct
 
 function Team() {
   const [vehicles, setVehicles] = useState([]);
-  const [newVehicle, setNewVehicle] = useState({ name: '', plateNumber: '' });
+  const [newVehicle, setNewVehicle] = useState({ name: '', plateNumber: '', vehicleID: '' });
 
   useEffect(() => {
     fetchVehicles();
@@ -28,11 +28,11 @@ function Team() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (newVehicle.name && newVehicle.plateNumber) {
+    if (newVehicle.name && newVehicle.plateNumber && newVehicle.vehicleID) {
       try {
         const docRef = await addDoc(collection(db, 'vehicles'), newVehicle);
         setVehicles(prevVehicles => [...prevVehicles, { id: docRef.id, ...newVehicle }]);
-        setNewVehicle({ name: '', plateNumber: '' });
+        setNewVehicle({ name: '', plateNumber: '', vehicleID: '' });
       } catch (error) {
         console.error("Error adding vehicle: ", error);
       }
@@ -71,6 +71,14 @@ function Team() {
             placeholder="Plate Number"
             required
           />
+          <input
+            type="text"
+            name="vehicleID"
+            value={newVehicle.vehicleID}
+            onChange={handleInputChange}
+            placeholder="Vehicle ID"
+            required
+          />
           <button type="submit" className="register-button">Register Vehicle</button>
         </form>
       </section>
@@ -80,7 +88,7 @@ function Team() {
         <ul className="vehicle-list">
           {vehicles.map((vehicle) => (
             <li key={vehicle.id} className="vehicle-item">
-              {vehicle.name} - {vehicle.plateNumber}
+              {vehicle.name} - {vehicle.plateNumber} (ID: {vehicle.vehicleID})
               <button onClick={() => handleDelete(vehicle.id)} className="delete-button">Delete</button>
             </li>
           ))}
